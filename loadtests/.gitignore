@@ -1,0 +1,4 @@
+# Dashboards HTML de JMeter: regenerables desde los .jtl con `run.sh ... -e -o`.
+# Se versionan los .jtl (crudos) y los .png (graficos entregables), no el HTML.
+report-*/
+jmeter.log

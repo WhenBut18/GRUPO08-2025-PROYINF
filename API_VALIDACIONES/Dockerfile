@@ -1,13 +1,20 @@
-
 FROM node:18-alpine
-WORKDIR /usr/src/app
-#Specify a working directory
+
+# Especificar el directorio de trabajo
 WORKDIR /usr/app
-#Copy the dependencies file
-COPY ./package.json ./
-#Install dependencies
-RUN npm install 
-#Copy remaining files
-COPY ./ ./
-#Default command
+
+# Copiar los archivos definiendo al usuario 'node' como propietario
+COPY --chown=node:node ./package*.json ./
+
+# Instalar dependencias
+RUN npm ci --ignore-scripts
+
+# Copiar el resto de los archivos con los permisos correctos
+COPY --chown=node:node ./index.js ./
+COPY --chown=node:node ./src ./src
+
+# Cambiar al usuario sin privilegios antes de ejecutar la aplicación
+USER node
+
+# Comando por defecto
 CMD ["npm","start"]

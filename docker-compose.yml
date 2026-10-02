@@ -8,17 +8,19 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
     volumes:
-      - ./API_EJEMPLO/init:/docker-entrypoint-initdb.d
-
-# Contenedor para la API de ejemplo
-  api_ejemplo:
-    build: ./API_EJEMPLO
-    image: api_ejemplo
+      - ./init-scripts:/docker-entrypoint-initdb.d
+      
+  # Frontend React (perfil opcional)
+  # Para activarlo: docker compose --profile frontend up -d
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
     volumes:
-      - ./API_EJEMPLO/:/usr/app
-      - /usr/app/node_modules
-    restart: on-failure
+      - ./frontend:/app
+      - /app/node_modules
+    command: sh -c "npm ci || npm i && npm run dev -- --host 0.0.0.0"
+    environment:
+      - VITE_API_URL=http://localhost:8080
     ports:
-      - "8082:8082"
-    depends_on:
-      - mysql
+      - "5173:5173"
+    profiles: ["frontend"]
